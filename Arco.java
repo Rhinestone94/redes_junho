@@ -12,22 +12,4 @@ public class Arco {
 		this.custo = custo;
 
 	}
-
-	
-	// getters e setters
-	public int getDestino() {
-		return destino;
-	}
-
-	public int getOrigem() {
-		return origem;
-	}
-
-	public int getCusto() {
-		return custo;
-	}
-
-	public void setCusto(int custo) {
-		this.custo = custo;
-	}
 }

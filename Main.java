@@ -12,7 +12,7 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 
-		File ficheiro = new File("test.txt"); 
+		File ficheiro = new File("yolo.txt"); 
 
 		if(!ficheiro.exists()){ 
 			System.out.print("Ficheiro não encontrado FAIL...");
@@ -79,10 +79,10 @@ public class Main {
 		// ========================== Árvore e caminho de menor custo ==========
 		
 		int noFonte = 2;
-		int noDestino = 4;
+		int noDestino = 5;
 
-		No_pred[] caminho;
-		caminho = grafo.Dijkstra(noFonte);
+		
+		grafo.Dijkstra(noFonte);
 		
 		
 		//debug Dijkstra
@@ -98,12 +98,47 @@ public class Main {
 		
 		
 		
-		//Rede.caminhoMenorCust(caminho, noFonte, noDestino);
-		//Rede.printCaminho();
+		grafo.caminhoMenorCusto(noFonte, noDestino); 
+		
+		// debug caminho de menor custo
+		System.out.println("\nCaminho de menor custo desde o nó fonte " + grafo.caminho.get(0).origem);
+		System.out.print(grafo.caminho.get(0).origem);
+		for(int i = 0; i < grafo.caminho.size(); i++)
+		{
+			System.out.print(" - " + grafo.caminho.get(i).destino);
+		}
+		System.out.println("\nCusto total do caminho: " + grafo.caminho.get(grafo.caminho.size() - 1).custo);
+		
+		System.out.println("");
+		System.out.println("Custo arco a arco: ");
+		
+		int cont = 0;
+		
+		for(int i = 0 ; i < grafo.caminho.size(); i++)
+		{
+			
+			Arco aux = grafo.caminho.get(i);
+			
+			System.out.println(aux.origem + " - " + aux.destino + "  custo " + (aux.custo - cont));
+			cont = aux.custo;
+		}
+		
+		
+		System.out.println();
 		
 	
 		
-		System.out.println("");
+		grafo.Prim(noFonte);
+		
+		
+		/*System.out.println("Prim - Árvore mínima abrangente desde o nó " + noFonte);
+		for(int i = 1; i < grafo.Tree.size() ; i++) {
+			//if (grafo.arvore.get(i).pred != 0) {
+			
+			System.out.println(grafo.Tree.get(i).no + "  -  " + grafo.Tree.get(i).pred + "  -  " + grafo.Tree.get(i).chave);		
+		
+		}	*/
+		
 		
 		
 		

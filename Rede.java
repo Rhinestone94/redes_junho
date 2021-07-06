@@ -2,6 +2,7 @@ package Proj;
 
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import Proj.HeapB.No_pred;
 import Proj.Arco;
@@ -19,28 +20,18 @@ public class Rede {
 	//para guardar o caminho de menor custo desde o nó fonte até ao nó destino
 	ArrayList<Arco> caminho; // variavel, estrutura, onde vai guardar o caminho desde um certo nó ao outro
 	
-	private int custo_total; // custo total do caminho
 	
+	// para o Prim
+	ArrayList <No_pred> Tree;
+	LinkedList<Arco>[] adjList_P;  //Lista de adjacências
+	private int numNos_P;
 	
 	
 	private int INF = Integer.MAX_VALUE;
-	No_pred d [] = new No_pred[numNos];
-	
-	
-	public ArrayList<Arco> getCaminho() {
-		return caminho;
-	}
+		
 	
 	public void setCaminho(ArrayList<Arco> caminho) {
 		this.caminho = caminho;
-	}
-	
-	public void setCusto_total(int custo_t) {
-		this.custo_total = custo_t;
-	}
-	
-	public int getCusto_total() {
-		return custo_total;
 	}
 	
 	
@@ -48,9 +39,12 @@ public class Rede {
 	public Rede(int v) {
 		numNos = v +1; 
 		adjList = new LinkedList[numNos];
+		
+		numNos_P = v +1; 
+		adjList_P = new LinkedList[numNos];
+		
+		
 
-		
-		
 		//Inicializaçao da lista de adjacencias para todos os nos
 		for (int i = 0; i < numNos ; i++) {
 			adjList[i] = new LinkedList<>();
@@ -59,14 +53,10 @@ public class Rede {
 	}
 
 
-	public Rede() {
-		// TODO Auto-generated constructor stub
-	}
-
 	
 	//========================================== DIJKSTRA ====================================
 	// devolve o conjunto dos Predecessores de cada nó à origem - que permite a construção da arvore dos caminhos de menor custo
-	public No_pred[] Dijkstra(int no_fonte) {
+	public void Dijkstra(int no_fonte) {
 		
 		// 1 - cria heap H
 		HeapB h = new HeapB(); // create_heap(H)
@@ -98,9 +88,6 @@ public class Rede {
 			
 			arvore.add(no_min_chave); 
 			
-			
-			// tem de ser criada esta variável para guardar o nó
-			int ii = no_min_chave.no; // procura nó i pelo nó 
 
 			// 7 - percorrer lista de adjacencias do nó i, A(i) arcos incidentes no nó i       	  
 
@@ -119,123 +106,103 @@ public class Rede {
 					else {
 
 						d[j].chave = valor;
-						d[j].pred = ii;
+						d[j].pred = no_min_chave.no;
 						h.decrementa_chave(valor, d[j]);
 					}
 				}
 			}	
 		} 	
-		/*
-		for (int i = 1; i < numNos ; i++) {
-			No_pred tree = new No_pred();
-			
-			tree.pred = d[i].pred;
-			tree.no= d[i].no;
-			tree.chave = d[i].chave;
-			
-			arvore.add(tree); // coloca na árvore 
-		} 
-		*/
 		
-		System.out.println();
+		
 		System.out.println("");
-		return d; // devolve o caminho de cada nó À origem e o custo total do caminho de cada nó à origem	
+		// devolve o caminho de cada nó À origem e o custo total do caminho de cada nó à origem	
 	}
 
 	//================================================= FIM Dijkstra ==============
 
-
-	/* 
-	 * O método tem que usar a variável/estrutura 'arvore' que está definida na classe Rede (onde é guardada a solução
-	 * do dijkstra). É nesta "arvore" que se encontra o caminho. 
-	 * 
-	 */
 	
 	
-	// ================================ Método caminho de menor custo 1 ==========
-	public void caminhoMenorCust(No_pred [] v, int origem, int destino) {
+	// ================================ Método caminho de menor custo ==========
+	public void caminhoMenorCusto(int origem, int destino) {
 		
-		caminho = new ArrayList<Arco>(); 
-		int custo_total = v[destino].chave;
+		caminho = new ArrayList<Arco>(); // inicializa caminho
 		
-		/*for (int i = 1; i < numNos ; i++) {
-			No_pred nos = new No_pred();
+		for(int i = 0; destino != origem && destino > 0; i++) { 
 			
-			nos.pred = d[i].pred;
-			nos.no = d[i].no;
-			nos.chave = d[i].chave;
+			int aux = destino; //variavel aux para poder ser utilizada no filtro
+			No_pred arcoFinal = this.arvore.stream().filter(a -> a.no == aux).findFirst().get();
 			
-			caminho.add(nos); // coloca no caminho
-		} */
+			
+			Arco arco = new Arco(arcoFinal.pred, arcoFinal.no, arcoFinal.chave);
+			destino = arcoFinal.pred;
+			caminho.add(0, arco); // coloca arco no caminho
 		
-		while(destino != origem) {
-			No_pred noFinal = v[destino]; // cria nó que está na ultima pos do vetor
-			Arco arco = new Arco(noFinal.pred, noFinal.no, noFinal.chave); // cria novo arco enquanto destino != origem
-			destino = noFinal.pred;
-			caminho.add(0, arco);
-			
 		}
 		
-		Rede path = new Rede(); // caminho
-		path.setCaminho(caminho); // mete o conjunto 'arcos' para fazer o caminho
-		System.out.println("");
+		//Collections.reverse(caminho); //inverte a ordem dos elementos (caso meta add(1,arco))
+		this.setCaminho(caminho); // atualiza e mete na variável caminho da Rede
 		
 	}
 	
 	
-	
-	
-	
-	// ================================ Método caminho menor custo 2 ==========
-
-	/*public static void caminhoMenorCusto2(No_pred[] dijk, int origem, int destino) {
-
-		ArrayList<Arco> caminho = new ArrayList<Arco>();  
-		//int custo_total = dijk[destino].chave;  
-
-		while (destino != origem) {
-			No_pred noFinal = dijk[destino]; // cria noFinal que tem na posicao no_destino 
-			Arco arco = new Arco(noFinal.pred, noFinal.no, noFinal.chave); // cria novo enquanto destino for diferente origem
-			destino = noFinal.pred; // o que era destino passa a ser o pred 
-			caminho.add(0, arco); // adiciona na pos 0 o arco
-
-		}
-		
-		
-		Rede path = new Rede(); // caminho
-		path.setCaminho(caminho); // mete o conjunto 'arcos' para fazer o caminho  
-		
-		//System.out.print(origem + " -> "+ caminho.));
-
-	}*/
-
-	
-	
-	// print do caminho menor custo
-	/*public static void printCaminho(Rede path) {
-
-		String resultado = "" ;
-		Arco ultimo = null;
-
-		ArrayList<Arco> nos = path.getCaminho();
-
-		for (Arco no : nos) { // para cada nó , que está dentro de 'nos' , ou seja, os arcos todos
-			resultado = resultado + no.getOrigem() + " -> ";
-			ultimo = no;
-		}
-
-		resultado = resultado + ultimo.getDestino();
-
-		System.out.println("Caminho menor custo desde o nó " + nos.get(0).getOrigem() + " até ao nó " + ultimo.getDestino() +":" );
-		System.out.println(resultado);
-
-
-		System.out.println("");
-	}*/
 	// ================================== FIM do Método para mostrar o caminho =================
 	
 	
 
+	// ====================================== Prim =============================
+	
+	public void Prim(int no_fonte) {
+
+		// 1 - cria heap H
+		HeapB h = new HeapB(); // create_heap(H)
+
+		No_pred no [] = new No_pred[numNos_P];
+
+		for (int j = 1; j < numNos_P ; j++) { //  
+			no[j] = new No_pred();
+			no[j].no = j;
+			no[j].chave = INF; // d[j] = C + 1 ?
+			//h.insert(no[j]); // for each j E N  -> insere na heap
+
+		}
+
+		no[no_fonte].chave = 0;
+		no[no_fonte].pred = 0;
+
+		h.insert(no[no_fonte]); // insere na heap o nó de minima chave
+
+		Tree = new ArrayList<>(); // inicializa T
+
+		while(Tree.size() < numNos_P) { // enquanto T é inferior ao nº de nós
+			No_pred no_min_chave = h.find_min();
+			h.delete_min();
+
+			Tree.add(no_min_chave); 
+
+			// erro no for
+			for(int i = 0; i < adjList_P[no_min_chave.no].size(); i++) {
+				Arco arco = adjList_P[no_min_chave.no].get(i);
+				int j = arco.destino; 
+
+				if(h.heap.contains(no[j])) { // j E H
+					
+					if(no[j].chave > arco.custo) { // 
+						no[j].chave = arco.custo; // d(j) = cij
+						no[j].pred = no_min_chave.no; // pred(j) = i
+						h.decrementa_chave(arco.custo, no[j]);
+					}
+				}
+
+			}
+
+		}
+
+	}
+	
+	
+	// ====================================== FIM Prim =============================
+	
+	
 	// adiciona arco
 	public void adicionaArco(int n1, int n2, int c) {
 		Arco arco = new Arco(n1, n2, c);
