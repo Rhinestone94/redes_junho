@@ -3,6 +3,7 @@ package Proj;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 import Proj.HeapB.No_pred;
 import Proj.Arco;
@@ -10,7 +11,7 @@ import Proj.Arco;
 
 public class Rede {
 
-	private int numNos;  // nº de nós na rede
+	int numNos;  // nº de nós na rede
 	LinkedList<Arco>[] adjList;  //Lista de adjacências
 	
 	// solução do dijkstra
@@ -23,9 +24,10 @@ public class Rede {
 	
 	// para o Prim
 	ArrayList <No_pred> Tree;
-	LinkedList<Arco>[] adjList_P;  //Lista de adjacências
-	private int numNos_P;
 	
+	ArrayList <No_pred> M_Tree; // links cujas capacidades de backup estão definidas
+	
+
 	
 	private int INF = Integer.MAX_VALUE;
 		
@@ -39,9 +41,6 @@ public class Rede {
 	public Rede(int v) {
 		numNos = v +1; 
 		adjList = new LinkedList[numNos];
-		
-		numNos_P = v +1; 
-		adjList_P = new LinkedList[numNos];
 		
 		
 
@@ -145,48 +144,49 @@ public class Rede {
 	}
 	
 	
-	// ================================== FIM do Método para mostrar o caminho =================
-	
+	// ================================== FIM do Método caminho menor custo =================
 	
 
-	// ====================================== Prim =============================
+	// ====================================== Algoritmo de Prim =============================
+	
+	// manipulação dos valores dos custos/capacidade
 	
 	public void Prim(int no_fonte) {
 
-		// 1 - cria heap H
 		HeapB h = new HeapB(); // create_heap(H)
+		
+		No_pred no [] = new No_pred[numNos];
 
-		No_pred no [] = new No_pred[numNos_P];
-
-		for (int j = 1; j < numNos_P ; j++) { //  
+		for (int j = 1; j < numNos; j++) {  
 			no[j] = new No_pred();
 			no[j].no = j;
-			no[j].chave = INF; // d[j] = C + 1 ?
-			//h.insert(no[j]); // for each j E N  -> insere na heap
+			no[j].chave = INF; // d[j] = C + 1 ou seja,  INF
+					
+			h.insert(no[j]); // for each j E N  -> insere na heap
 
 		}
-
+			
+		// d(1) = 0 ; pred(1) = 0 , ou seja, o nó fonte
+		
 		no[no_fonte].chave = 0;
-		no[no_fonte].pred = 0;
 
 		h.insert(no[no_fonte]); // insere na heap o nó de minima chave
 
 		Tree = new ArrayList<>(); // inicializa T
 
-		while(Tree.size() < numNos_P) { // enquanto T é inferior ao nº de nós
+		while(Tree.size() < numNos) { // enquanto T é inferior ao nº de nós
 			No_pred no_min_chave = h.find_min();
 			h.delete_min();
 
 			Tree.add(no_min_chave); 
-
-			// erro no for
-			for(int i = 0; i < adjList_P[no_min_chave.no].size(); i++) {
-				Arco arco = adjList_P[no_min_chave.no].get(i);
+			
+			for(int i = 0; i < adjList[no_min_chave.no].size(); i++) {
+				Arco arco = adjList[no_min_chave.no].get(i);
 				int j = arco.destino; 
 
 				if(h.heap.contains(no[j])) { // j E H
 					
-					if(no[j].chave > arco.custo) { // 
+					if(no[j].chave > arco.custo) { 
 						no[j].chave = arco.custo; // d(j) = cij
 						no[j].pred = no_min_chave.no; // pred(j) = i
 						h.decrementa_chave(arco.custo, no[j]);
@@ -198,9 +198,91 @@ public class Rede {
 		}
 
 	}
-	
-	
 	// ====================================== FIM Prim =============================
+	
+	// ==================================== PRIM v2 =============================
+	
+	public void Prim_v2(int no_fonte) {
+
+		HeapB h = new HeapB(); // create_heap(H)
+		
+		No_pred no [] = new No_pred[numNos];
+
+		for (int j = 1; j < numNos; j++) {  
+			no[j] = new No_pred();
+			no[j].no = j;
+			no[j].chave = INF; // d[j] = C + 1 ou seja,  INF
+					
+			h.insert(no[j]); // for each j E N  -> insere na heap
+
+		}
+			
+		// d(1) = 0 ; pred(1) = 0 , ou seja, o nó fonte
+		
+		no[no_fonte].chave = 0;
+
+		h.insert(no[no_fonte]); // insere na heap o nó de minima chave
+
+		Tree = new ArrayList<>(); // inicializa T
+		
+		
+		// M inicialmente vazia ; M = 0
+		M_Tree = new ArrayList<>(); 
+		
+		
+
+		while(Tree.size() < numNos) { // enquanto T é inferior ao nº de nós
+			No_pred no_min_chave = h.find_min();
+			h.delete_min();
+
+			Tree.add(no_min_chave); 
+			
+			for(int i = 0; i < adjList[no_min_chave.no].size(); i++) {
+				
+				//adjList[no_min_chave.no].sort(Comparator.comparing(arco -> arco.));
+				
+			
+			
+				Arco arco = adjList[no_min_chave.no].get(i);
+				int j = arco.destino; 
+
+				if(h.heap.contains(no[j])) { // j E H
+					
+					if(no[j].chave > arco.custo) { 
+						no[j].chave = arco.custo; // d(j) = cij
+						no[j].pred = no_min_chave.no; // pred(j) = i
+						h.decrementa_chave(arco.custo, no[j]);
+					}
+				}
+
+			}
+			
+			// AQUI
+			
+			/*for(int i = 1; i < Tree.size() ; i++) {
+				
+			
+			if(:::) {
+				Tree.add(no_min_chave); // F = F + {ei}
+				
+				no_min_chave.workingC = no_min_chave.chave / 2; // w(e) = u(e) / 2
+				no_min_chave.protectionC = (no_min_chave.chave) - (no_min_chave.workingC); // p(e) = u - w
+				
+				M_Tree.add(no_min_chave);
+			} else {
+				no_min_chave.workingC = no_min_chave.chave;
+				no_min_chave.protectionC = 0;
+				
+			}
+			}*/
+			
+
+		}
+
+	}
+	
+	// ===================================== FIM v2 ================================
+	
 	
 	
 	// adiciona arco
@@ -254,6 +336,5 @@ public class Rede {
 
 
 } // fim da classe Rede
-	    
 	    
 	        
