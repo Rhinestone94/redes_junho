@@ -25,6 +25,7 @@ public class Rede {
 	// para o Prim
 	ArrayList <No_pred> Tree;
 	
+	// para o 2Edge
 	ArrayList <No_pred> M_Tree; // links cujas capacidades de backup estão definidas
 	
 
@@ -200,86 +201,56 @@ public class Rede {
 	}
 	// ====================================== FIM Prim =============================
 	
-	// ==================================== PRIM v2 =============================
 	
-	public void Prim_v2(int no_fonte) {
+	
+	
+	
+	// ==================================== 2-EDGE =============================
+	
+	
+	/*
+	public void prim2edge(ArrayList<No_pred> Tree, Rede graph) { //necessário passar como parâmetro a árvore e a rede/grafo para comparar
 
-		HeapB h = new HeapB(); // create_heap(H)
+		M_Tree = new ArrayList<>(); // M inicialmente vazia
+
 		
-		No_pred no [] = new No_pred[numNos];
+		Arco arco = new Arco;
 
-		for (int j = 1; j < numNos; j++) {  
-			no[j] = new No_pred();
-			no[j].no = j;
-			no[j].chave = INF; // d[j] = C + 1 ou seja,  INF
-					
-			h.insert(no[j]); // for each j E N  -> insere na heap
+		for (int i = 1; i < graph.numNos ; i++) {
+			for (int j = 1; i < Tree.size(); j++) {
 
-		}
-			
-		// d(1) = 0 ; pred(1) = 0 , ou seja, o nó fonte
-		
-		no[no_fonte].chave = 0;
+				if ((graph.adjList[i].get(i).origem == graph.Tree.get(j).no && graph.adjList[i].get(i) .get(j).pred == Tree.get(j).pred ) || (rede .get(j).no == Tree.get(j).pred && rede .get(j).pred == Tree.get(j).no)) {
 
-		h.insert(no[no_fonte]); // insere na heap o nó de minima chave
+					if(se v1 e v2 são nós raiz) {
+						Tree.add(arco); // F = F + {ei}
 
-		Tree = new ArrayList<>(); // inicializa T
-		
-		
-		// M inicialmente vazia ; M = 0
-		M_Tree = new ArrayList<>(); 
-		
-		
+						// é formado um ciclo C , que inclui os arcos da árvore + o arco i
 
-		while(Tree.size() < numNos) { // enquanto T é inferior ao nº de nós
-			No_pred no_min_chave = h.find_min();
-			h.delete_min();
+						for(para cada arco que pertence ao ciclo C  MENOS os que estão em M, inicialmente a 0) {
+							
+							workingC = chave / 2; // w = u/2
+							protectionC = chave - workingC; // p = u - w
+							M_Tree.add(arco); // M = M + e
 
-			Tree.add(no_min_chave); 
-			
-			for(int i = 0; i < adjList[no_min_chave.no].size(); i++) {
-				
-				//adjList[no_min_chave.no].sort(Comparator.comparing(arco -> arco.));
-				
-			
-			
-				Arco arco = adjList[no_min_chave.no].get(i);
-				int j = arco.destino; 
-
-				if(h.heap.contains(no[j])) { // j E H
-					
-					if(no[j].chave > arco.custo) { 
-						no[j].chave = arco.custo; // d(j) = cij
-						no[j].pred = no_min_chave.no; // pred(j) = i
-						h.decrementa_chave(arco.custo, no[j]);
+						}
+					}
+					else
+					{
+						workingC = chave;
+						protectionC = 0;
 					}
 				}
 
-			}
-			
-			// AQUI
-			
-			/*for(int i = 1; i < Tree.size() ; i++) {
-				
-			
-			if(:::) {
-				Tree.add(no_min_chave); // F = F + {ei}
-				
-				no_min_chave.workingC = no_min_chave.chave / 2; // w(e) = u(e) / 2
-				no_min_chave.protectionC = (no_min_chave.chave) - (no_min_chave.workingC); // p(e) = u - w
-				
-				M_Tree.add(no_min_chave);
-			} else {
-				no_min_chave.workingC = no_min_chave.chave;
-				no_min_chave.protectionC = 0;
-				
-			}
-			}*/
-			
 
+			}
 		}
 
 	}
+	*/
+	
+	
+
+		
 	
 	// ===================================== FIM v2 ================================
 	

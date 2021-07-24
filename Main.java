@@ -83,24 +83,22 @@ public class Main {
 			// calcula o maximo
 			if (custo > max) {
 				max = custo;
+			}	
+			//custo *= (-1);
+			
+			grafo_custosNegativos.adicionaArco(no1, no2, custo);	
+		}
+		
+		for (int i = 1; i < grafo_custosNegativos.numNos ; i++) {
+			
+			for (Arco a : grafo_custosNegativos.adjList[i]) {
+				a.custo *= (-1);
+				a.custo += (max + 1);
+		
 			}
-		
-			custo *= (-1);
-		
-			grafo_custosNegativos.adicionaArco(no1, no2, custo);
 			
 		}
-		// adicionar o max a todos os arcos do teu grafo_custosNegativos
-		for (int i = 1; i < grafo_custosNegativos.numNos ; i++) {
 
-			for (Arco e : grafo_custosNegativos.adjList[i]) {
-				e.custo += (max +1);
-			}	
-			
-		} 
-		
-		
-		
 		
 		buffer.close();
 		buffer_2.close();
@@ -149,7 +147,6 @@ public class Main {
 		}	
 
 
-
 		grafo.caminhoMenorCusto(noFonte, noDestino); 
 
 		// debug caminho de menor custo
@@ -175,72 +172,85 @@ public class Main {
 			cont = aux.custo;
 		}
 		System.out.println();
-
-
+		
+		
 		grafo.Prim(noFonte);
-
 
 		System.out.println("Prim - Árvore mínima abrangente desde o nó " + noFonte);
 		System.out.println("Nó    Pred   Custo do arco");
 		for(int i = 1; i < grafo.Tree.size() ; i++) {
-			//if (grafo.arvore.get(i).pred != 0) {
-
+			
 			System.out.println(grafo.Tree.get(i).no + "  -  " + grafo.Tree.get(i).pred + "  -  " + grafo.Tree.get(i).chave);		
 
 		}	
 
 
 		// =========================== debug Prim com custos negativos
-		int noPrim = 6;
+		int noPrim = 6;	
+		
 		grafo_custosNegativos.Prim(noPrim);
+		
+		/*for (int i = 1; i < grafo_custosNegativos.numNos ; i++) {
+
+			for (Arco e : grafo_custosNegativos.adjList[i]) {
+				e.custo -= max -1;
+				e.custo *= (-1) ;
+			}
+		}*/
+		
+			
 
 		System.out.println("Prim - Árvore abrangente máxima desde o nó " + noPrim);
 		System.out.println("Nó    Pred   ");
 		for(int i = 1; i < grafo_custosNegativos.Tree.size() ; i++) {	
-			System.out.println(grafo_custosNegativos.Tree.get(i).no + "  -  " + grafo_custosNegativos.Tree.get(i).pred + "  -  " + grafo_custosNegativos.Tree.get(i).chave );
+			System.out.println(grafo_custosNegativos.Tree.get(i).no + "  -  " + grafo_custosNegativos.Tree.get(i).pred + "  -  " + (grafo_custosNegativos.Tree.get(i).chave )  );
+		
 		}	
 		
 		
-		// =============== Criação e escrita do ficheiro .gv  (para usar no graphviz) ================= 
-		System.out.println("");
 		
+		
+		
+		
+		// ======================== Criação e escrita do ficheiro ============================ 
+		System.out.println("");
+
 		try {
 			File myObj = new File("grafo.gv");
 			if (myObj.createNewFile()) {
-			       System.out.println("Ficheiro criado: " + myObj.getName());
-			      } else {
-			        System.out.println("O ficheiro já existe.");
-			      }
-			    } catch (IOException e) {
-			      System.out.println("Erro ao criar ...");
-			      e.printStackTrace();
-			    }
+				System.out.println("Ficheiro criado: " + myObj.getName());
+			} else {
+				System.out.println("O ficheiro já existe.");
+			}
+		} catch (IOException e) {
+			System.out.println("Erro ao criar ...");
+			e.printStackTrace();
+		}
 		try {
-		      FileWriter myWriter = new FileWriter("grafo.gv");
-		      myWriter.write("graph Grafo {\n\t");
-		      
-		      for(int i = 2; i < grafo.Tree.size(); i++) {
-					
-					myWriter.write("\"" + grafo.Tree.get(i).pred + "\"" + "  --  " + "\"" + grafo.Tree.get(i).no + "\"" + " [label=" + "\"" + grafo.Tree.get(i).chave + "\"" + "]" + " [color=blue]" + ";\n\t");	
-					
-				}	
-		      
-		      
-		      myWriter.write("}");
-		      myWriter.close();
-		      
-		    } catch (IOException e) {
-		      System.out.println("Erro na escrita ...");
-		      e.printStackTrace();
-		    }
-		
-		// ======================== FIM da escrita do ficheiro =================
-		
+			FileWriter myWriter = new FileWriter("grafo.gv");
+			myWriter.write("graph Grafo {\n\t");
+
+			for(int i = 2; i < grafo.Tree.size(); i++) {
+
+				myWriter.write("\"" + grafo.Tree.get(i).pred + "\"" + "  --  " + "\"" + grafo.Tree.get(i).no + "\"" + " [label=" + "\"" + grafo.Tree.get(i).chave + "\"" + "]" + " [color=blue]" + ";\n\t");	
+
+			}	
+
+			myWriter.write("}");
+			myWriter.close();
+
+		} catch (IOException e) {
+			System.out.println("Erro na escrita ...");
+			e.printStackTrace();
+		}
+
+		// =================================== FIM da escrita do ficheiro =================
+
 	}
-		  
-		
-		
-	} // FIM do Main
+
+
+
+} // FIM do Main
 
 
 
